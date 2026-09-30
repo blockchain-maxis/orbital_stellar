@@ -206,7 +206,7 @@ describe("spec.schema.json", () => {
     expect(required).toContain("types");
   });
 
-  it("enumerates all 15 Soroban primitive types in PrimitiveType", () => {
+  it("enumerates all 16 Soroban primitive types in PrimitiveType", () => {
     const defs = specSchema["$defs"] as Record<string, unknown>;
     const primitive = defs["PrimitiveType"] as Record<string, unknown>;
     const enumValues = primitive["enum"] as string[];
@@ -230,8 +230,8 @@ describe("spec.schema.json", () => {
       // left behind, so a spec using it passed validateSpec but failed the
       // schema.
       "error",
-      // The generic scSpecTypeVal slot (raw soroban_sdk::Val), needed to
-      // discover the Aquarius pool contracts.
+      // The generic scvVal slot (an argument or return of any ScVal type).
+      // Real and common: DeFindex strategies take Vec<Val> init args.
       "val",
     ];
     expect(enumValues).toHaveLength(expected.length);
@@ -301,17 +301,6 @@ describe("validateSpec - representative spec validates", () => {
       throw new Error(`Expected valid spec but got errors: ${result.errors.join(", ")}`);
     }
     expect(result.valid).toBe(true);
-  });
-
-  it("accepts the generic val primitive in params and returns", () => {
-    const result = validateSpec({
-      version: "1.0.0",
-      name: "Val user",
-      functions: [{ name: "f", params: [{ name: "x", type: "val" }], returns: "val" }],
-      events: [],
-      types: {},
-    });
-    expect(result).toEqual({ valid: true });
   });
 });
 

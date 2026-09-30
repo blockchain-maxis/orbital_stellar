@@ -90,8 +90,13 @@ export function mapTypeDef(type: xdr.ScSpecTypeDef): TypeSpec {
       const map = type.map();
       return { type: "map", key: mapTypeDef(map.keyType()), value: mapTypeDef(map.valueType()) };
     }
-    case "scSpecTypeTuple":
-      return { type: "tuple", elements: type.tuple().valueTypes().map(mapTypeDef) };
+    case "scSpecTypeTuple": {
+      const elements = type.tuple().valueTypes().map(mapTypeDef);
+      // The unit type `()` encodes as an empty tuple on the wire (e.g. the
+      // `Ok` arm of `Result<(), ...>`); it is void semantically.
+      if (elements.length === 0) return "void";
+      return { type: "tuple", elements };
+    }
     case "scSpecTypeBytesN":
       return { type: "bytes_n", size: type.bytesN().n() };
     case "scSpecTypeUdt":
@@ -101,7 +106,10 @@ export function mapTypeDef(type: xdr.ScSpecTypeDef): TypeSpec {
     // encoded regardless of which #[contracterror] enum is named.
     case "scSpecTypeError":
       return "error";
-    // The generic "any" ScVal slot (a raw `soroban_sdk::Val` parameter/return).
+    // The generic value slot (`scvVal` on the wire): an argument or return of
+    // any ScVal type. Real and common - DeFindex strategies take `Vec<Val>`
+    // init args. Maps onto PrimitiveType's "val" like "error" does for the
+    // generic error slot.
     case "scSpecTypeVal":
       return "val";
     default:

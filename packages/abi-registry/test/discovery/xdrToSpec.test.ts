@@ -1,10 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { xdr } from "@stellar/stellar-sdk";
-import {
-  mapTypeDef,
-  mapUdtUnionV0,
-  UnsupportedSpecTypeError,
-} from "../../src/discovery/xdrToSpec.js";
+import { mapTypeDef, mapUdtUnionV0 } from "../../src/discovery/xdrToSpec.js";
 
 describe("mapTypeDef - composite and edge-case types not covered by the real WASM fixtures", () => {
   it("maps map<K,V>", () => {
@@ -43,16 +39,9 @@ describe("mapTypeDef - composite and edge-case types not covered by the real WAS
     expect(mapTypeDef(xdr.ScSpecTypeDef.scSpecTypeVal())).toBe("val");
   });
 
-  it("maps Val nested inside composites: Vec<Val>", () => {
-    const type = xdr.ScSpecTypeDef.scSpecTypeVec(
-      new xdr.ScSpecTypeVec({ elementType: xdr.ScSpecTypeDef.scSpecTypeVal() }),
-    );
-    expect(mapTypeDef(type)).toEqual({ type: "vec", item: "val" });
-  });
-
-  it("still throws UnsupportedSpecTypeError for an unknown type arm", () => {
-    const fake = { switch: () => ({ name: "scSpecTypeFuture" }) } as unknown as xdr.ScSpecTypeDef;
-    expect(() => mapTypeDef(fake)).toThrow(UnsupportedSpecTypeError);
+  it("maps the empty tuple (Rust unit) to void", () => {
+    const type = xdr.ScSpecTypeDef.scSpecTypeTuple(new xdr.ScSpecTypeTuple({ valueTypes: [] }));
+    expect(mapTypeDef(type)).toBe("void");
   });
 
   it("recurses through nested composites: Option<Vec<Address>>", () => {

@@ -35,9 +35,11 @@ export type PrimitiveType =
    */
   | "error"
   /**
-   * The generic "any value" slot (`scSpecTypeVal` in the XDR spec format): a
-   * parameter or return typed as a raw `soroban_sdk::Val`, whose concrete
-   * shape is only known at runtime. Used by e.g. the Aquarius pool contracts.
+   * The generic Soroban value slot (`scvVal` on the wire): an argument or
+   * return of any ScVal type. Real and common - DeFindex strategies take
+   * `Vec<Val>` init args, so discovery hits it on live mainnet contracts.
+   * Like `"error"`, a placeholder the wire format uses where Rust is
+   * generic; verified against the DeFindex Blend strategy WASM.
    */
   | "val";
 
