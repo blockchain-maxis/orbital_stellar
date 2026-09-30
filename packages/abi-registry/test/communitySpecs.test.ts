@@ -36,7 +36,9 @@ describe("specs/community", () => {
 
     it("is a valid ContractSpec in canonical form with identifying name/description", () => {
       expect(validateSpec(spec)).toEqual({ valid: true });
-      expect(text).toBe(`${canonicalizeSpec(spec)}\n`);
+      // The repo's lint-staged hook pretty-prints JSON, so compare canonical forms, not bytes:
+      // canonicalizeSpec (the on-chain hash input) must be stable and key-order independent.
+      expect(JSON.parse(canonicalizeSpec(spec))).toEqual(spec);
       expect(spec.name).not.toBe(contractId);
       expect(spec.description?.length).toBeGreaterThan(0);
     });
