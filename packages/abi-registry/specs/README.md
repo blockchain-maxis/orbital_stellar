@@ -145,3 +145,18 @@ node validate.js
 - `1` - one or more specs fail; errors are printed to stderr with the file path and the failing field.
 
 CI runs `pnpm --filter @orbital-stellar/abi-registry validate` on every pull request that touches `packages/abi-registry/`.
+
+---
+
+## Community verified specs
+
+`specs/community/` holds verified canonical specs for third-party protocol contracts. Each contract has two files:
+
+- `<contractId>.json` - the canonical `ContractSpec`, produced by `discoverContractSpec()` and serialized with `canonicalizeSpec()` (not hand-written), with `version`, `name` and `description` set to identify the protocol and contract role.
+- `<contractId>.verdict.json` - the output of `abi-registry verify <contractId> --schema <file> --network mainnet --rpc-url <mainnet RPC> --json`; its `status` must be `match`.
+
+Specs are not published on-chain by the contributor; the maintainer publishes merged specs.
+
+| Contract ID | Protocol / role | Source |
+|---|---|---|
+| `CAS3FL6TLZKDGGSISDBWGGPXT3NRR4DYTZD7YOD3HMYO6LTJUVGRVEAM` | Comet BLND:USDC pool (backs the Blend backstop) | [Blend mainnet deployments](https://docs.blend.capital/mainnet-deployments), [`blend-utils/mainnet.contracts.json`](https://github.com/blend-capital/blend-utils/blob/main/mainnet.contracts.json) |

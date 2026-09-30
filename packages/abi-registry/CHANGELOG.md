@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- `specs/community/` - verified canonical spec and `match` verdict for the Comet BLND:USDC pool (`CAS3FL6T...VEAM`).
+
 ## [0.2.0] - 2026-09-23
 
 ### Added
